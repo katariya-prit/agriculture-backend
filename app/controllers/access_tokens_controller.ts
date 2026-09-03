@@ -11,7 +11,7 @@ export default class AccessTokensController {
 
     response.cookie('access_token', token.value!.release(), {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: true,
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
