@@ -72,7 +72,7 @@ export default class AuthController {
     response.cookie('access_token', token.value!.release(), {
       httpOnly: true,
       sameSite: 'lax',
-      secure: false,
+      secure: true,
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     })
