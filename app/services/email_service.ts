@@ -22,7 +22,7 @@ export default class EmailService {
     fullName: string
     token: string
   }) {
-    const { toEmail, fullName, token } = params
+    const { toEmail, token } = params
 
     // TODO: real email provider ahiya call karvo.
     // Example structure (Resend vaparta):
