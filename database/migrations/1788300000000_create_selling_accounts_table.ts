@@ -11,11 +11,12 @@ export default class extends BaseSchema {
         .integer('user_id')
         .unsigned()
         .notNullable()
+        .unique()
         .references('id')
         .inTable('users')
         .onDelete('CASCADE')
 
-      // ---- quickInfo (filled while creating the selling account — required) ----
+      // ---- quickInfo ----
       table.string('selling_account_name').notNullable()
       table.string('mobile_number', 15).notNullable()
       table.boolean('mobile_verified').notNullable().defaultTo(false)
@@ -23,12 +24,12 @@ export default class extends BaseSchema {
       table.string('aadhaar_number', 20).notNullable()
       table.boolean('aadhaar_verified').notNullable().defaultTo(false)
 
-      // ---- basicIdentity (profile step 1 — required) ----
+      // ---- basicIdentity ----
       table.string('photo_url').nullable()
       table.date('date_of_birth').nullable()
       table.string('gender', 20).nullable()
 
-      // ---- farmAndLandDetails (profile step 2 — required) ----
+      // ---- farmAndLandDetails ----
       table.string('village').nullable()
       table.string('taluka').nullable()
       table.string('district').nullable()
@@ -36,7 +37,7 @@ export default class extends BaseSchema {
       table.string('pincode', 10).nullable()
       table.string('survey_number').nullable()
 
-      // ---- cropAndProductionInfo (profile step 3 — fully optional) ----
+      // ---- cropAndProductionInfo ----
       table.json('primary_crops').nullable()
       table.string('crop_season', 20).nullable()
       table.decimal('expected_yield_value', 8, 2).nullable()

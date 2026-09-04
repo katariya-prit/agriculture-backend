@@ -3,7 +3,12 @@ import CloudinaryService from '#services/cloudinary_service'
 import type { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export default class ProductSallService {
-  static async create(userId: number, payload: any, files: MultipartFile[]) {
+  static async create(
+    userId: number,
+    sellingAccountId: number,
+    payload: any,
+    files: MultipartFile[]
+  ) {
     let imageUrls: string[] = []
 
     if (files && files.length > 0) {
@@ -12,13 +17,12 @@ export default class ProductSallService {
 
     const listing = await ProductSall.create({
       userId,
+      sellingAccountId,
       cropName: payload.crop_name,
       variety: payload.variety,
-      quantity: payload.quantity,
       unit: payload.unit,
-      expectedPrice: payload.expected_price,
-      quality: payload.quality,
-      marketApmc: payload.market_apmc,
+      pricePerUnit: payload.price_per_unit,
+      market: payload.market,
       harvestDate: payload.harvest_date,
       contactNumber: payload.contact_number,
       description: payload.description,
@@ -39,11 +43,9 @@ export default class ProductSallService {
     listing.merge({
       cropName: payload.crop_name ?? listing.cropName,
       variety: payload.variety ?? listing.variety,
-      quantity: payload.quantity ?? listing.quantity,
       unit: payload.unit ?? listing.unit,
-      expectedPrice: payload.expected_price ?? listing.expectedPrice,
-      quality: payload.quality ?? listing.quality,
-      marketApmc: payload.market_apmc ?? listing.marketApmc,
+      pricePerUnit: payload.price_per_unit ?? listing.pricePerUnit,
+      market: payload.market ?? listing.market,
       harvestDate: payload.harvest_date ?? listing.harvestDate,
       contactNumber: payload.contact_number ?? listing.contactNumber,
       description: payload.description ?? listing.description,
@@ -55,7 +57,6 @@ export default class ProductSallService {
   }
 
   static async delete(listing: ProductSall) {
-    // Cloudinary thi badhi images delete karo
     if (listing.images && listing.images.length > 0) {
       for (const url of listing.images) {
         await CloudinaryService.deleteImage(url)

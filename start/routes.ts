@@ -33,7 +33,7 @@ router
         router.delete('logout', [AccessTokensController, 'destroy'])
         router.get('me', [ProfileController, 'show'])
       })
-      .use(middleware.auth())
+      .use(middleware.auth({ guards: ['api'] }))
   })
   .prefix('auth')
 
@@ -51,7 +51,7 @@ router
     router.patch('/crop-info', [SellingAccountController, 'updateCropAndProductionInfo'])
   })
   .prefix('/api/selling-account')
-  .use(middleware.auth())
+  .use(middleware.auth({ guards: ['api'] }))
 
 // ============================================================
 // AI — AgriPluce 1.0.0 + AgriPluce AI Map 1.0.0

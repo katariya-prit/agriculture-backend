@@ -2,13 +2,19 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
+import SellingAccount from '#models/selling_account'
 
 export default class ProductSall extends BaseModel {
+  static table = 'crop_listings'
+
   @column({ isPrimary: true })
   declare id: number
 
   @column()
   declare userId: number
+
+  @column()
+  declare sellingAccountId: number
 
   @column()
   declare cropName: string
@@ -17,19 +23,13 @@ export default class ProductSall extends BaseModel {
   declare variety: string | null
 
   @column()
-  declare quantity: number | null
-
-  @column()
   declare unit: string | null
 
   @column()
-  declare expectedPrice: number | null
+  declare pricePerUnit: number | null
 
   @column()
-  declare quality: string | null
-
-  @column()
-  declare marketApmc: string
+  declare market: string
 
   @column.date()
   declare harvestDate: DateTime | null
@@ -41,13 +41,23 @@ export default class ProductSall extends BaseModel {
   declare description: string | null
 
   @column({
-    prepare: (value: string[]) => JSON.stringify(value),
-    consume: (value: string) => (typeof value === 'string' ? JSON.parse(value) : value),
+    prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
+    consume: (value: unknown) => {
+      if (!value) return []
+      if (typeof value === 'string') {
+        try {
+          return JSON.parse(value)
+        } catch {
+          return []
+        }
+      }
+      return value as string[]
+    },
   })
   declare images: string[] | null
 
   @column()
-  declare status: string
+  declare isSalled: boolean
 
   @column()
   declare isActive: boolean
@@ -60,4 +70,7 @@ export default class ProductSall extends BaseModel {
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
+
+  @belongsTo(() => SellingAccount)
+  declare sellingAccount: BelongsTo<typeof SellingAccount>
 }

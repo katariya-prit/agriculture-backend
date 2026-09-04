@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import EmailService from '#services/email_service'
-import { registerValidator, loginValidator, verifyEmailValidator } from '#validators/user'
+import { registerValidator, verifyEmailValidator } from '#validators/user'
 
 export default class AuthController {
   /**
@@ -51,36 +51,5 @@ export default class AuthController {
     await user.save()
 
     return response.ok({ message: 'Email verify thai gayu. Have login kari shakso.' })
-  }
-
-  /**
-   * Login — email verify thayeli hovi farrjiyat chhe.
-   */
-  async login({ request, response }: HttpContext) {
-    const { email, password } = await request.validateUsing(loginValidator)
-
-    const user = await User.verifyCredentials(email, password)
-
-    if (!user.isEmailVerified) {
-      return response.forbidden({
-        message: 'Login karva pahela email verify karo.',
-      })
-    }
-
-    const token = await User.accessTokens.create(user)
-
-    response.cookie('access_token', token.value!.release(), {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    })
-
-    await user.load((loader) => {
-      loader.load('sellingAccount')
-    })
-
-    return response.ok({ user })
   }
 }

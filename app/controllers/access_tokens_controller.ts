@@ -17,6 +17,16 @@ export default class AccessTokensController {
       maxAge: 60 * 60 * 24 * 7,
     })
 
+    // Non-httpOnly marker cookie — frontend reads this only to know "am I logged in?"
+    // The real token above stays httpOnly and out of reach from JS.
+    response.cookie('is_logged_in', 'true', {
+      httpOnly: false,
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    })
+
     return response.ok({ user })
   }
 
@@ -28,6 +38,8 @@ export default class AccessTokensController {
     }
 
     response.clearCookie('access_token')
+    response.clearCookie('is_logged_in')
+
     return response.ok({ message: 'Logged out successfully' })
   }
 }

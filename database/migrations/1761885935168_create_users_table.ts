@@ -13,6 +13,12 @@ export default class extends BaseSchema {
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()
 
+      // ---- User type — decides what kind of account this is ----
+      table
+        .enu('type', ['farmer', 'buyer', 'admin'])
+        .notNullable()
+        .defaultTo('farmer')
+
       // ---- Email verification ----
       table.boolean('is_email_verified').notNullable().defaultTo(false)
       table.string('email_verification_token').nullable()

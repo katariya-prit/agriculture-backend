@@ -1,0 +1,23 @@
+import type { HttpContext } from '@adonisjs/core/http'
+import type { NextFn } from '@adonisjs/core/types/http'
+
+/**
+ * AdonisJS na access-token guard 'Authorization: Bearer <token>' header
+ * mathi j token read kare chhe, cookie mathi nahi.
+ *
+ * Aa middleware 'access_token' cookie ma thi token vanchi ne, jo Authorization
+ * header pehla thi na hoy to, e header automatically set kari de chhe —
+ * jethi frontend e sirf cookie j moklu, header manually attach karva ni jarur na rahe.
+ */
+export default class ExtractTokenFromCookieMiddleware {
+  async handle(ctx: HttpContext, next: NextFn) {
+    const existingHeader = ctx.request.header('authorization')
+    const cookieToken = ctx.request.cookie('access_token')
+
+    if (!existingHeader && cookieToken) {
+      ctx.request.request.headers['authorization'] = `Bearer ${cookieToken}`
+    }
+
+    return next()
+  }
+}

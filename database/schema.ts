@@ -33,7 +33,7 @@ export class AuthAccessTokenSchema extends BaseModel {
 }
 
 export class CropListingSchema extends BaseModel {
-  static $columns = ['contactNumber', 'createdAt', 'cropName', 'description', 'expectedPrice', 'harvestDate', 'id', 'images', 'isActive', 'marketApmc', 'quality', 'quantity', 'status', 'unit', 'updatedAt', 'userId', 'variety'] as const
+  static $columns = ['contactNumber', 'createdAt', 'cropName', 'description', 'harvestDate', 'id', 'images', 'isActive', 'isSalled', 'market', 'pricePerUnit', 'sellingAccountId', 'unit', 'updatedAt', 'userId', 'variety'] as const
   $columns = CropListingSchema.$columns
   @column()
   declare contactNumber: string
@@ -43,8 +43,6 @@ export class CropListingSchema extends BaseModel {
   declare cropName: string
   @column()
   declare description: string | null
-  @column()
-  declare expectedPrice: string | null
   @column.date()
   declare harvestDate: DateTime | null
   @column({ isPrimary: true })
@@ -54,13 +52,13 @@ export class CropListingSchema extends BaseModel {
   @column()
   declare isActive: boolean | null
   @column()
-  declare marketApmc: string
+  declare isSalled: boolean | null
   @column()
-  declare quality: string | null
+  declare market: string
   @column()
-  declare quantity: string | null
+  declare pricePerUnit: string | null
   @column()
-  declare status: string | null
+  declare sellingAccountId: number | null
   @column()
   declare unit: string | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
@@ -127,7 +125,7 @@ export class SellingAccountSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = ['createdAt', 'email', 'emailVerificationToken', 'fullName', 'id', 'isEmailVerified', 'password', 'sellingAccountId', 'updatedAt', 'username'] as const
+  static $columns = ['createdAt', 'email', 'emailVerificationToken', 'fullName', 'id', 'isEmailVerified', 'password', 'sellingAccountId', 'type', 'updatedAt', 'username'] as const
   $columns = UserSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
@@ -145,6 +143,8 @@ export class UserSchema extends BaseModel {
   declare password: string
   @column()
   declare sellingAccountId: number | null
+  @column()
+  declare type: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()

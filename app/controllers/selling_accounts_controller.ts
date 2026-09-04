@@ -9,17 +9,16 @@ import {
 
 export default class SellingAccountController {
   /**
-   * Selling account create — auth.user pase already selling_account_id
-   * hoy to error, nahi to navu banavi ne users.selling_account_id set kare.
+   * POST /api/selling-account — pehli vaar account banave (quickInfo)
    */
   async store({ auth, request, response }: HttpContext) {
     const user = auth.getUserOrFail()
-
-    if (user.sellingAccountId) {
-      return response.badRequest({ message: 'Tamaru selling account already banelu chhe.' })
-    }
-
     const payload = await request.validateUsing(createSellingAccountValidator)
+
+    const existing = await SellingAccount.findBy('userId', user.id)
+    if (existing) {
+      return response.conflict({ message: 'Selling account already chhe.' })
+    }
 
     const sellingAccount = await SellingAccount.create({
       userId: user.id,
@@ -27,8 +26,6 @@ export default class SellingAccountController {
       mobileNumber: payload.mobileNumber,
       shortAddress: payload.shortAddress,
       aadhaarNumber: payload.aadhaarNumber,
-      mobileVerified: false,
-      aadhaarVerified: false, // free aadhaar-verification service add thaya pachi ahiya trigger karsu
     })
 
     user.sellingAccountId = sellingAccount.id
@@ -38,59 +35,61 @@ export default class SellingAccountController {
   }
 
   /**
-   * Logged-in user nu potanu selling account + profile completion % batave.
+   * GET /api/selling-account — current user nu selling account
    */
   async show({ auth, response }: HttpContext) {
     const user = auth.getUserOrFail()
-    await user.load((loader) => {
-      loader.load('sellingAccount')
-    })
+    const sellingAccount = await SellingAccount.findBy('userId', user.id)
 
-    if (!user.sellingAccount) {
-      return response.notFound({ message: 'Selling account hajii banyu nathi.' })
+    if (!sellingAccount) {
+      return response.notFound({ message: 'Selling account nathi. Pehla banavo.' })
     }
 
-    return response.ok({ sellingAccount: user.sellingAccount })
+    return response.ok({
+      sellingAccount,
+      profileCompletion: sellingAccount.profileCompletion,
+    })
   }
 
-  /** Profile step 1 */
+  /**
+   * PATCH /api/selling-account/basic-identity
+   */
   async updateBasicIdentity({ auth, request, response }: HttpContext) {
-    const sellingAccount = await this.#ownedAccountOrFail(auth)
+    const user = auth.getUserOrFail()
     const payload = await request.validateUsing(updateBasicIdentityValidator)
 
+    const sellingAccount = await SellingAccount.findByOrFail('userId', user.id)
     sellingAccount.merge(payload)
     await sellingAccount.save()
 
     return response.ok({ sellingAccount })
   }
 
-  /** Profile step 2 */
+  /**
+   * PATCH /api/selling-account/farm-details
+   */
   async updateFarmAndLandDetails({ auth, request, response }: HttpContext) {
-    const sellingAccount = await this.#ownedAccountOrFail(auth)
+    const user = auth.getUserOrFail()
     const payload = await request.validateUsing(updateFarmAndLandDetailsValidator)
 
+    const sellingAccount = await SellingAccount.findByOrFail('userId', user.id)
     sellingAccount.merge(payload)
     await sellingAccount.save()
 
     return response.ok({ sellingAccount })
   }
 
-  /** Profile step 3 — optional */
+  /**
+   * PATCH /api/selling-account/crop-info
+   */
   async updateCropAndProductionInfo({ auth, request, response }: HttpContext) {
-    const sellingAccount = await this.#ownedAccountOrFail(auth)
+    const user = auth.getUserOrFail()
     const payload = await request.validateUsing(updateCropAndProductionInfoValidator)
 
+    const sellingAccount = await SellingAccount.findByOrFail('userId', user.id)
     sellingAccount.merge(payload)
     await sellingAccount.save()
 
     return response.ok({ sellingAccount })
-  }
-
-  async #ownedAccountOrFail(auth: HttpContext['auth']) {
-    const user = auth.getUserOrFail()
-    if (!user.sellingAccountId) {
-      throw new Error('Selling account nathi — pahela create karo.')
-    }
-    return await SellingAccount.findOrFail(user.sellingAccountId)
   }
 }
