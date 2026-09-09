@@ -126,6 +126,30 @@ const routes = {
     tokens: [{"old":"/api/product-salls/:id","type":0,"val":"api","end":""},{"old":"/api/product-salls/:id","type":0,"val":"product-salls","end":""},{"old":"/api/product-salls/:id","type":1,"val":"id","end":""}],
     types: placeholder as Registry['product_salls.destroy']['types'],
   },
+  'market_rates.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/market-rates',
+    tokens: [{"old":"/api/market-rates","type":0,"val":"api","end":""},{"old":"/api/market-rates","type":0,"val":"market-rates","end":""}],
+    types: placeholder as Registry['market_rates.index']['types'],
+  },
+  'market_rates.price_history': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/price-history',
+    tokens: [{"old":"/api/price-history","type":0,"val":"api","end":""},{"old":"/api/price-history","type":0,"val":"price-history","end":""}],
+    types: placeholder as Registry['market_rates.price_history']['types'],
+  },
+  'ai.analyze_crop_image': {
+    methods: ["POST"],
+    pattern: '/api/ai/crop-analysis',
+    tokens: [{"old":"/api/ai/crop-analysis","type":0,"val":"api","end":""},{"old":"/api/ai/crop-analysis","type":0,"val":"ai","end":""},{"old":"/api/ai/crop-analysis","type":0,"val":"crop-analysis","end":""}],
+    types: placeholder as Registry['ai.analyze_crop_image']['types'],
+  },
+  'ai.chat_with_gemini': {
+    methods: ["POST"],
+    pattern: '/api/ai/gemini/chat',
+    tokens: [{"old":"/api/ai/gemini/chat","type":0,"val":"api","end":""},{"old":"/api/ai/gemini/chat","type":0,"val":"ai","end":""},{"old":"/api/ai/gemini/chat","type":0,"val":"gemini","end":""},{"old":"/api/ai/gemini/chat","type":0,"val":"chat","end":""}],
+    types: placeholder as Registry['ai.chat_with_gemini']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

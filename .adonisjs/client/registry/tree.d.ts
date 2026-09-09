@@ -25,6 +25,8 @@ export interface ApiDefinition {
     predict: typeof routes['ai.predict']
     mindmap: typeof routes['ai.mindmap']
     mindmapStream: typeof routes['ai.mindmap_stream']
+    analyzeCropImage: typeof routes['ai.analyze_crop_image']
+    chatWithGemini: typeof routes['ai.chat_with_gemini']
   }
   productSalls: {
     myListings: typeof routes['product_salls.my_listings']
@@ -33,5 +35,9 @@ export interface ApiDefinition {
     show: typeof routes['product_salls.show']
     update: typeof routes['product_salls.update']
     destroy: typeof routes['product_salls.destroy']
+  }
+  marketRates: {
+    index: typeof routes['market_rates.index']
+    priceHistory: typeof routes['market_rates.price_history']
   }
 }

@@ -24,6 +24,10 @@ export type ScannedRoutes = {
     'product_salls.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'product_salls.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'product_salls.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'market_rates.index': { paramsTuple?: []; params?: {} }
+    'market_rates.price_history': { paramsTuple?: []; params?: {} }
+    'ai.analyze_crop_image': { paramsTuple?: []; params?: {} }
+    'ai.chat_with_gemini': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'auth.register': { paramsTuple?: []; params?: {} }
@@ -35,6 +39,8 @@ export type ScannedRoutes = {
     'ai.mindmap': { paramsTuple?: []; params?: {} }
     'ai.mindmap_stream': { paramsTuple?: []; params?: {} }
     'product_salls.store': { paramsTuple?: []; params?: {} }
+    'ai.analyze_crop_image': { paramsTuple?: []; params?: {} }
+    'ai.chat_with_gemini': { paramsTuple?: []; params?: {} }
   }
   DELETE: {
     'access_tokens.destroy': { paramsTuple?: []; params?: {} }
@@ -46,6 +52,8 @@ export type ScannedRoutes = {
     'product_salls.my_listings': { paramsTuple?: []; params?: {} }
     'product_salls.index': { paramsTuple?: []; params?: {} }
     'product_salls.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'market_rates.index': { paramsTuple?: []; params?: {} }
+    'market_rates.price_history': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'profile.show': { paramsTuple?: []; params?: {} }
@@ -53,6 +61,8 @@ export type ScannedRoutes = {
     'product_salls.my_listings': { paramsTuple?: []; params?: {} }
     'product_salls.index': { paramsTuple?: []; params?: {} }
     'product_salls.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'market_rates.index': { paramsTuple?: []; params?: {} }
+    'market_rates.price_history': { paramsTuple?: []; params?: {} }
   }
   PATCH: {
     'selling_account.update_basic_identity': { paramsTuple?: []; params?: {} }

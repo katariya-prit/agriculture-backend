@@ -1,5 +1,7 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
+import MarketRatesController from '#controllers/market-controller'
+import AiController from '#controllers/ai_controller'
 
 const AuthController = () =>
   import('#controllers/auth_controller')
@@ -105,3 +107,16 @@ router
   })
   .prefix('api')
   .use(middleware.auth({ guards: ['api'] }))
+
+router
+  .group(() => {
+    router.get('/api/market-rates', [MarketRatesController, 'index'])
+    router.get('/api/price-history', [MarketRatesController, 'priceHistory'])
+  })
+
+router
+  .group(() => {
+    router.post('/crop-analysis', [AiController, 'analyzeCropImage'])
+    router.post('/gemini/chat', [AiController, 'chatWithGemini'])
+  })
+  .prefix('/api/ai')

@@ -247,4 +247,52 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/product_salls_controller').default['destroy']>>>
     }
   }
+  'market_rates.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/market-rates'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'market_rates.price_history': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/price-history'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'ai.analyze_crop_image': {
+    methods: ["POST"]
+    pattern: '/api/ai/crop-analysis'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'ai.chat_with_gemini': {
+    methods: ["POST"]
+    pattern: '/api/ai/gemini/chat'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
 }

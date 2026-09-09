@@ -22,6 +22,8 @@ export default await Env.create(new URL('../', import.meta.url), {
   APP_KEY: Env.schema.secret(),
   APP_URL: Env.schema.string({ format: 'url', tld: false }),
 
+  GEMINI_API_KEY: Env.schema.string(),
+
   PG_HOST: Env.schema.string(),
   PG_PORT: Env.schema.number(), // string() na badle number()
   PG_USER: Env.schema.string(),
