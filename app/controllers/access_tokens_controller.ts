@@ -8,8 +8,9 @@ export default class AccessTokensController {
 
     const user = await User.verifyCredentials(email, password)
     const token = await User.accessTokens.create(user)
+    const tokenValue = token.value!.release()
 
-    response.cookie('access_token', token.value!.release(), {
+    response.cookie('access_token', tokenValue, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
@@ -17,8 +18,6 @@ export default class AccessTokensController {
       maxAge: 60 * 60 * 24 * 7,
     })
 
-    // Non-httpOnly marker cookie — frontend reads this only to know "am I logged in?"
-    // The real token above stays httpOnly and out of reach from JS.
     response.cookie('is_logged_in', 'true', {
       httpOnly: false,
       sameSite: 'none',
@@ -27,7 +26,7 @@ export default class AccessTokensController {
       maxAge: 60 * 60 * 24 * 7,
     })
 
-    return response.ok({ user })
+    return response.ok({ user, token: tokenValue })
   }
 
   async destroy({ auth, response }: HttpContext) {
