@@ -5,81 +5,81 @@ import { createProductSallValidator, updateProductSallValidator } from '#validat
 import ProductSallService from '#services/product_sall_service'
 
 export default class ProductSallsController {
-  // GET /product-salls
-  async index({ response }: HttpContext) {
-    const listings = await ProductSall.query()
-      .where('is_active', true)
-      .preload('user')
-      .preload('sellingAccount')
-      .orderBy('created_at', 'desc')
-    return response.ok(listings)
-  }
-
-  // GET /product-salls/:id
-  async show({ params, response }: HttpContext) {
-    const listing = await ProductSall.query()
-      .where('id', params.id)
-      .preload('user')
-      .preload('sellingAccount')
-      .firstOrFail()
-    return response.ok(listing)
-  }
-
-  // POST /product-salls
-  async store({ request, auth, response }: HttpContext) {
-    const user = auth.user!
-
-    // Selling account joie j — nahi to product list na thai shake
-    const sellingAccount = await SellingAccount.query().where('userId', user.id).first()
-    if (!sellingAccount) {
-      return response.badRequest({
-        message: 'Pahela selling account banavo, pachi j product list karo.',
-      })
+    // GET /product-salls
+    async index({ response }: HttpContext) {
+        const listings = await ProductSall.query()
+            .where('is_active', true)
+            .preload('user')
+            .preload('sellingAccount')
+            .orderBy('created_at', 'desc')
+        return response.ok(listings)
     }
 
-    const payload = await request.validateUsing(createProductSallValidator)
+    // GET /product-salls/:id
+    async show({ params, response }: HttpContext) {
+        const listing = await ProductSall.query()
+            .where('id', params.id)
+            .preload('user')
+            .preload('sellingAccount')
+            .firstOrFail()
+        return response.ok(listing)
+    }
 
-    const files = request.files('images', {
-      size: '5gb',
-      extnames: ['jpg', 'jpeg', 'png', 'webp'],
-    })
+    // POST /product-salls
+    async store({ request, auth, response }: HttpContext) {
+        const user = auth.user!
 
-    const listing = await ProductSallService.create(user.id, sellingAccount.id, payload, files)
+        // Selling account joie j — nahi to product list na thai shake
+        const sellingAccount = await SellingAccount.query().where('userId', user.id).first()
+        if (!sellingAccount) {
+            return response.badRequest({
+                message: 'Pahela selling account banavo, pachi j product list karo.',
+            })
+        }
 
-    return response.created(listing)
-  }
+        const payload = await request.validateUsing(createProductSallValidator)
 
-  // GET /product-salls/mine
-  async myListings({ auth, response }: HttpContext) {
-    const user = auth.user!
-    const listings = await ProductSall.query()
-      .where('user_id', user.id)
-      .preload('user')
-      .preload('sellingAccount')
-      .orderBy('created_at', 'desc')
-    return response.ok(listings)
-  }
+        const files = request.files('images', {
+            size: '5gb',
+            extnames: ['jpg', 'jpeg', 'png', 'webp'],
+        })
 
-  // PUT /product-salls/:id
-  async update({ params, request, response }: HttpContext) {
-    const listing = await ProductSall.findOrFail(params.id)
-    const payload = await request.validateUsing(updateProductSallValidator)
+        const listing = await ProductSallService.create(user.id, sellingAccount.id, payload, files)
 
-    const files = request.files('images', {
-      size: '5gb',
-      extnames: ['jpg', 'jpeg', 'png', 'webp'],
-    })
+        return response.created(listing)
+    }
 
-    const updated = await ProductSallService.update(listing, payload, files)
+    // GET /product-salls/mine
+    async myListings({ auth, response }: HttpContext) {
+        const user = auth.user!
+        const listings = await ProductSall.query()
+            .where('user_id', user.id)
+            .preload('user')
+            .preload('sellingAccount')
+            .orderBy('created_at', 'desc')
+        return response.ok(listings)
+    }
 
-    return response.ok(updated)
-  }
+    // PUT /product-salls/:id
+    async update({ params, request, response }: HttpContext) {
+        const listing = await ProductSall.findOrFail(params.id)
+        const payload = await request.validateUsing(updateProductSallValidator)
 
-  // DELETE /product-salls/:id
-  async destroy({ params, response }: HttpContext) {
-    const listing = await ProductSall.findOrFail(params.id)
-    await ProductSallService.delete(listing)
+        const files = request.files('images', {
+            size: '5gb',
+            extnames: ['jpg', 'jpeg', 'png', 'webp'],
+        })
 
-    return response.ok({ message: 'Deleted successfully' })
-  }
+        const updated = await ProductSallService.update(listing, payload, files)
+
+        return response.ok(updated)
+    }
+
+    // DELETE /product-salls/:id
+    async destroy({ params, response }: HttpContext) {
+        const listing = await ProductSall.findOrFail(params.id)
+        await ProductSallService.delete(listing)
+
+        return response.ok({ message: 'Deleted successfully' })
+    }
 }
