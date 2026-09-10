@@ -127,54 +127,6 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/selling_accounts_controller').default['updateCropAndProductionInfo']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
-  'ai.chat': {
-    methods: ["POST"]
-    pattern: '/api/ai/chat'
-    types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['chat']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['chat']>>>
-    }
-  }
-  'ai.predict': {
-    methods: ["POST"]
-    pattern: '/api/ai/predict'
-    types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['predict']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['predict']>>>
-    }
-  }
-  'ai.mindmap': {
-    methods: ["POST"]
-    pattern: '/api/ai/mindmap'
-    types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['mindmap']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['mindmap']>>>
-    }
-  }
-  'ai.mindmap_stream': {
-    methods: ["POST"]
-    pattern: '/api/ai/mindmap/stream'
-    types: {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['mindmapStream']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ais_controller').default['mindmapStream']>>>
-    }
-  }
   'product_salls.my_listings': {
     methods: ["GET","HEAD"]
     pattern: '/api/product-salls/my'

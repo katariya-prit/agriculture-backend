@@ -20,14 +20,6 @@ export interface ApiDefinition {
     updateFarmAndLandDetails: typeof routes['selling_account.update_farm_and_land_details']
     updateCropAndProductionInfo: typeof routes['selling_account.update_crop_and_production_info']
   }
-  ai: {
-    chat: typeof routes['ai.chat']
-    predict: typeof routes['ai.predict']
-    mindmap: typeof routes['ai.mindmap']
-    mindmapStream: typeof routes['ai.mindmap_stream']
-    analyzeCropImage: typeof routes['ai.analyze_crop_image']
-    chatWithGemini: typeof routes['ai.chat_with_gemini']
-  }
   productSalls: {
     myListings: typeof routes['product_salls.my_listings']
     index: typeof routes['product_salls.index']
@@ -39,5 +31,9 @@ export interface ApiDefinition {
   marketRates: {
     index: typeof routes['market_rates.index']
     priceHistory: typeof routes['market_rates.price_history']
+  }
+  ai: {
+    analyzeCropImage: typeof routes['ai.analyze_crop_image']
+    chatWithGemini: typeof routes['ai.chat_with_gemini']
   }
 }

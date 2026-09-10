@@ -15,8 +15,6 @@ const ProfileController = () =>
 const SellingAccountController = () =>
   import('#controllers/selling_accounts_controller')
 
-const Ai = () =>
-  import('#controllers/ais_controller')
 
 const ProductSallsController = () => import('#controllers/product_salls_controller')
 
@@ -59,46 +57,6 @@ router
 // AI — AgriPluce 1.0.0 + AgriPluce AI Map 1.0.0
 // Fakt logged-in khedut j AI vapari shake (misuse rokva mate)
 // ============================================================
-
-router
-  .group(() => {
-    // ---- Chat / Plant Analysis ----
-    router.post('chat', [Ai, 'chat'])
-
-    router.get('chat', async ({ response }) => {
-      return response.ok({
-        success: true,
-        service: 'AgriPluce AI',
-        model: 'AgriPluce 1.0.0',
-        route: '/api/ai/chat',
-        method: 'POST',
-        message:
-          'AgriPluce AI chat route is working. Use POST /api/ai/chat for AI requests.',
-      })
-    })
-
-    router.post('predict', [Ai, 'predict'])
-
-    // ---- Mind Map ----
-    router.post('mindmap', [Ai, 'mindmap'])
-
-    router.get('mindmap', async ({ response }) => {
-      return response.ok({
-        success: true,
-        service: 'AgriPluce AI Map',
-        model: 'AgriPluce AI Map 1.0.0',
-        route: '/api/ai/mindmap',
-        method: 'POST',
-        languages: ['english', 'hindi', 'gujarati'],
-        message:
-          'AgriPluce AI Map route is working. Use POST /api/ai/mindmap to generate a mind map.',
-      })
-    })
-
-    router.post('mindmap/stream', [Ai, 'mindmapStream'])
-  })
-  .prefix('/api/ai')
-  .use(middleware.auth())
 
 router
   .group(() => {

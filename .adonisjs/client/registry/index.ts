@@ -66,30 +66,6 @@ const routes = {
     tokens: [{"old":"/api/selling-account/crop-info","type":0,"val":"api","end":""},{"old":"/api/selling-account/crop-info","type":0,"val":"selling-account","end":""},{"old":"/api/selling-account/crop-info","type":0,"val":"crop-info","end":""}],
     types: placeholder as Registry['selling_account.update_crop_and_production_info']['types'],
   },
-  'ai.chat': {
-    methods: ["POST"],
-    pattern: '/api/ai/chat',
-    tokens: [{"old":"/api/ai/chat","type":0,"val":"api","end":""},{"old":"/api/ai/chat","type":0,"val":"ai","end":""},{"old":"/api/ai/chat","type":0,"val":"chat","end":""}],
-    types: placeholder as Registry['ai.chat']['types'],
-  },
-  'ai.predict': {
-    methods: ["POST"],
-    pattern: '/api/ai/predict',
-    tokens: [{"old":"/api/ai/predict","type":0,"val":"api","end":""},{"old":"/api/ai/predict","type":0,"val":"ai","end":""},{"old":"/api/ai/predict","type":0,"val":"predict","end":""}],
-    types: placeholder as Registry['ai.predict']['types'],
-  },
-  'ai.mindmap': {
-    methods: ["POST"],
-    pattern: '/api/ai/mindmap',
-    tokens: [{"old":"/api/ai/mindmap","type":0,"val":"api","end":""},{"old":"/api/ai/mindmap","type":0,"val":"ai","end":""},{"old":"/api/ai/mindmap","type":0,"val":"mindmap","end":""}],
-    types: placeholder as Registry['ai.mindmap']['types'],
-  },
-  'ai.mindmap_stream': {
-    methods: ["POST"],
-    pattern: '/api/ai/mindmap/stream',
-    tokens: [{"old":"/api/ai/mindmap/stream","type":0,"val":"api","end":""},{"old":"/api/ai/mindmap/stream","type":0,"val":"ai","end":""},{"old":"/api/ai/mindmap/stream","type":0,"val":"mindmap","end":""},{"old":"/api/ai/mindmap/stream","type":0,"val":"stream","end":""}],
-    types: placeholder as Registry['ai.mindmap_stream']['types'],
-  },
   'product_salls.my_listings': {
     methods: ["GET","HEAD"],
     pattern: '/api/product-salls/my',

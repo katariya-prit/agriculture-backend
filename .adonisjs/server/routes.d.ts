@@ -14,10 +14,6 @@ export type ScannedRoutes = {
     'selling_account.update_basic_identity': { paramsTuple?: []; params?: {} }
     'selling_account.update_farm_and_land_details': { paramsTuple?: []; params?: {} }
     'selling_account.update_crop_and_production_info': { paramsTuple?: []; params?: {} }
-    'ai.chat': { paramsTuple?: []; params?: {} }
-    'ai.predict': { paramsTuple?: []; params?: {} }
-    'ai.mindmap': { paramsTuple?: []; params?: {} }
-    'ai.mindmap_stream': { paramsTuple?: []; params?: {} }
     'product_salls.my_listings': { paramsTuple?: []; params?: {} }
     'product_salls.index': { paramsTuple?: []; params?: {} }
     'product_salls.store': { paramsTuple?: []; params?: {} }
@@ -34,10 +30,6 @@ export type ScannedRoutes = {
     'auth.verify_email': { paramsTuple?: []; params?: {} }
     'access_tokens.store': { paramsTuple?: []; params?: {} }
     'selling_account.store': { paramsTuple?: []; params?: {} }
-    'ai.chat': { paramsTuple?: []; params?: {} }
-    'ai.predict': { paramsTuple?: []; params?: {} }
-    'ai.mindmap': { paramsTuple?: []; params?: {} }
-    'ai.mindmap_stream': { paramsTuple?: []; params?: {} }
     'product_salls.store': { paramsTuple?: []; params?: {} }
     'ai.analyze_crop_image': { paramsTuple?: []; params?: {} }
     'ai.chat_with_gemini': { paramsTuple?: []; params?: {} }
