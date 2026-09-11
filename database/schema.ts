@@ -125,7 +125,7 @@ export class SellingAccountSchema extends BaseModel {
 }
 
 export class UserSchema extends BaseModel {
-  static $columns = ['createdAt', 'email', 'emailVerificationToken', 'fullName', 'id', 'isEmailVerified', 'password', 'sellingAccountId', 'type', 'updatedAt', 'username'] as const
+  static $columns = ['createdAt', 'email', 'emailVerificationToken', 'emailVerificationTokenExpiresAt', 'fullName', 'id', 'isEmailVerified', 'password', 'sellingAccountId', 'type', 'updatedAt', 'username'] as const
   $columns = UserSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
@@ -133,6 +133,8 @@ export class UserSchema extends BaseModel {
   declare email: string
   @column()
   declare emailVerificationToken: string | null
+  @column.dateTime()
+  declare emailVerificationTokenExpiresAt: DateTime | null
   @column()
   declare fullName: string
   @column({ isPrimary: true })

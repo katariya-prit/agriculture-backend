@@ -18,6 +18,12 @@ const routes = {
     tokens: [{"old":"/auth/verify-email","type":0,"val":"auth","end":""},{"old":"/auth/verify-email","type":0,"val":"verify-email","end":""}],
     types: placeholder as Registry['auth.verify_email']['types'],
   },
+  'auth.resend_verification': {
+    methods: ["POST"],
+    pattern: '/auth/resend-verification',
+    tokens: [{"old":"/auth/resend-verification","type":0,"val":"auth","end":""},{"old":"/auth/resend-verification","type":0,"val":"resend-verification","end":""}],
+    types: placeholder as Registry['auth.resend_verification']['types'],
+  },
   'access_tokens.store': {
     methods: ["POST"],
     pattern: '/auth/login',

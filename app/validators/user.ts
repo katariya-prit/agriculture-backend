@@ -27,3 +27,9 @@ export const verifyEmailValidator = vine.compile(
     token: vine.string().trim(),
   })
 )
+
+export const resendVerificationValidator = vine.compile(
+  vine.object({
+    email: vine.string().trim().email().normalizeEmail(),
+  })
+)

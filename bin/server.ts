@@ -1,9 +1,3 @@
-/*
-|--------------------------------------------------------------------------
-| HTTP server entrypoint
-|--------------------------------------------------------------------------
-*/
-
 await import('reflect-metadata')
 
 const fs = await import('node:fs')
@@ -11,11 +5,6 @@ const dotenv = await import('dotenv')
 
 const APP_ROOT = new URL('../', import.meta.url)
 
-/**
- * .env / .env.local ne FILE thi j parse kare chhe — process.env ne
- * touch nathi karto. Adonis nu potanu loader baaki badha vars
- * (APP_URL, HOST, PORT etc.) normal rite interpolate karse.
- */
 function loadEnvFile(fileName: string) {
     const filePath = new URL(fileName, APP_ROOT)
     return fs.existsSync(filePath) ? dotenv.parse(fs.readFileSync(filePath)) : {}
@@ -23,11 +12,9 @@ function loadEnvFile(fileName: string) {
 
 const parsedEnv = {
     ...loadEnvFile('.env'),
-    ...loadEnvFile('.env.local'), // Adonis ni jem j .env.local ne priority
+    ...loadEnvFile('.env.local'),
 }
 
-// real process.env (shell export / production host) hoy to e j priority,
-// nahi to parsed .env file ni value
 const read = (key: string) => process.env[key] ?? parsedEnv[key]
 
 const { Ignitor, prettyPrintError } = await import('@adonisjs/core')
@@ -39,12 +26,6 @@ const IMPORTER = (filePath: string) => {
     return import(filePath)
 }
 
-/**
- * Local Postgres try kare chhe, na male to Neon (DATABASE_URL) par
- * fallback. Production ma seedhu Neon. FINAL values j process.env
- * ma set thay chhe — PG_HOST/PORT/USER/PASSWORD/DB_NAME/SSL sivay
- * koi biju var touch nathi thatu.
- */
 async function resolveDbConnection() {
     const useNeon = () => {
         const neonUrl = new URL(read('DATABASE_URL')!)
@@ -83,7 +64,7 @@ async function resolveDbConnection() {
         process.env.PG_SSL = 'false'
         console.log('✅ Local Postgres connected')
     } catch {
-        console.log('⚠️ Local Postgres na malyu — Neon vaparu chhu')
+        console.log('⚠️ Neon Postgres Connected')
         useNeon()
     }
 }

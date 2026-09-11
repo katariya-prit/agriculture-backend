@@ -5,6 +5,7 @@ export interface ApiDefinition {
   auth: {
     register: typeof routes['auth.register']
     verifyEmail: typeof routes['auth.verify_email']
+    resendVerification: typeof routes['auth.resend_verification']
   }
   accessTokens: {
     store: typeof routes['access_tokens.store']

@@ -26,6 +26,7 @@ router
   .group(() => {
     router.post('signup', [AuthController, 'register'])
     router.post('verify-email', [AuthController, 'verifyEmail'])
+    router.post('resend-verification', [AuthController, 'resendVerification'])
     router.post('login', [AccessTokensController, 'store'])
 
     router
@@ -54,8 +55,8 @@ router
   .use(middleware.auth({ guards: ['api'] }))
 
 // ============================================================
-// AI — AgriPluce 1.0.0 + AgriPluce AI Map 1.0.0
-// Fakt logged-in khedut j AI vapari shake (misuse rokva mate)
+// PRODUCT SALLS — marketplace listings
+// (pehla aa jagya e "AI" no khoto comment header hato — fix karyu)
 // ============================================================
 
 router
@@ -66,11 +67,20 @@ router
   .prefix('api')
   .use(middleware.auth({ guards: ['api'] }))
 
+// ============================================================
+// MARKET RATES
+// ============================================================
+
 router
   .group(() => {
     router.get('/api/market-rates', [MarketRatesController, 'index'])
     router.get('/api/price-history', [MarketRatesController, 'priceHistory'])
   })
+  .use(middleware.auth({ guards: ['api'] }))
+
+// ============================================================
+// AI — crop analysis + Gemini chat
+// ============================================================
 
 router
   .group(() => {
@@ -78,3 +88,4 @@ router
     router.post('/gemini/chat', [AiController, 'chatWithGemini'])
   })
   .prefix('/api/ai')
+  .use(middleware.auth({ guards: ['api'] }))

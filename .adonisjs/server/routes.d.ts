@@ -6,6 +6,7 @@ export type ScannedRoutes = {
   ALL: {
     'auth.register': { paramsTuple?: []; params?: {} }
     'auth.verify_email': { paramsTuple?: []; params?: {} }
+    'auth.resend_verification': { paramsTuple?: []; params?: {} }
     'access_tokens.store': { paramsTuple?: []; params?: {} }
     'access_tokens.destroy': { paramsTuple?: []; params?: {} }
     'profile.show': { paramsTuple?: []; params?: {} }
@@ -28,6 +29,7 @@ export type ScannedRoutes = {
   POST: {
     'auth.register': { paramsTuple?: []; params?: {} }
     'auth.verify_email': { paramsTuple?: []; params?: {} }
+    'auth.resend_verification': { paramsTuple?: []; params?: {} }
     'access_tokens.store': { paramsTuple?: []; params?: {} }
     'selling_account.store': { paramsTuple?: []; params?: {} }
     'product_salls.store': { paramsTuple?: []; params?: {} }

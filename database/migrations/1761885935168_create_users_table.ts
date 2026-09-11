@@ -13,7 +13,7 @@ export default class extends BaseSchema {
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()
 
-      // ---- User type — decides what kind of account this is ----
+      // ---- User type ----
       table
         .enu('type', ['farmer', 'buyer', 'admin'])
         .notNullable()
@@ -22,10 +22,9 @@ export default class extends BaseSchema {
       // ---- Email verification ----
       table.boolean('is_email_verified').notNullable().defaultTo(false)
       table.string('email_verification_token').nullable()
+      table.timestamp('email_verification_token_expires_at').nullable()
 
-      // ---- Link to selling account (added later once selling_accounts exists) ----
-      // See: alter_users_table_add_selling_account_id migration
-
+      // ---- Timestamps ----
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

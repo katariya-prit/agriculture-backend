@@ -1,52 +1,44 @@
-import { randomBytes } from 'node:crypto'
+import mail from '@adonisjs/mail/services/main'
+import env from '#start/env'
 
-/**
- * Aa service email-related kaam alag rakhe chhe, jethi AuthController saaf rahe.
- * Actual email provider (Resend / Brevo / SMTP) nakki thaya pachi
- * `sendVerificationEmail` andar j badlvanu — baaki koi jagya e code change nahi karvo padse.
- */
+// Single source of truth — auth_controller.ts ahi thi j import kare chhe,
+// jethi email no text ane actual expiry logic kadi mismatch na thay.
+export const OTP_VALIDITY_MINUTES = 10
+
+interface SendVerificationEmailPayload {
+  toEmail: string
+  fullName: string
+  otp: string
+}
+
 export default class EmailService {
   /**
-   * Random verification token banave — user create karta vakhate DB ma save karvanu.
+   * 6-digit numeric OTP banave (e.g. "482913").
    */
   static generateVerificationToken(): string {
-    return randomBytes(32).toString('hex')
+    return Math.floor(100000 + Math.random() * 900000).toString()
   }
 
   /**
-   * Verification email mokalvanu — have j fakt console.log chhe (TODO).
-   * Provider nakki thay etle ahiya nodemailer/Resend/Brevo no actual call aavse.
+   * Verification OTP email Brevo SMTP thi mokle chhe.
    */
-  static async sendVerificationEmail(params: {
-    toEmail: string
-    fullName: string
-    token: string
-  }) {
-    const { toEmail, token } = params
-
-    // TODO: real email provider ahiya call karvo.
-    // Example structure (Resend vaparta):
-    //
-    // await resend.emails.send({
-    //   from: 'FarmLoop <noreply@farmloop.in>',
-    //   to: toEmail,
-    //   subject: 'Email verify karo — FarmLoop',
-    //   html: `<p>Namaste ${fullName},</p>
-    //          <p>Aa link par click kari ne email verify karo:</p>
-    //          <a href="https://yourapp.com/verify-email?email=${toEmail}&token=${token}">Verify karo</a>`,
-    // })
-
-    console.log(`[EmailService] Verification email — to: ${toEmail}, token: ${token}`)
-  }
-
-  /**
-   * Selling account create thay tyare — jo koi welcome/notification email
-   * mokalvi hoy to ahiya add karso.
-   */
-  static async sendSellingAccountCreatedEmail(params: { toEmail: string; sellingAccountName: string }) {
-    const { toEmail, sellingAccountName } = params
-
-    // TODO: real email provider
-    console.log(`[EmailService] Selling account created — to: ${toEmail}, account: ${sellingAccountName}`)
+  static async sendVerificationEmail({ toEmail, fullName, otp }: SendVerificationEmailPayload) {
+    await mail.send((message) => {
+      message
+        .to(toEmail)
+        .from(env.get('MAIL_FROM_ADDRESS', 'noreply@farmloop.in'), env.get('MAIL_FROM_NAME', 'FarmLoop'))
+        .subject(`${otp} — Tamaru FarmLoop verification code`)
+        .html(`
+          <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+            <h2 style="color: #0B3D26;">Namaste ${fullName},</h2>
+            <p>FarmLoop ma register karva badal aabhar. Email verify karva mate niche no code app ma nakho:</p>
+            <div style="background: #EAF6EE; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
+              <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #0B3D26;">${otp}</span>
+            </div>
+            <p style="color: #5B6E63; font-size: 13px;">Aa code ${OTP_VALIDITY_MINUTES} minute mate j valid chhe.</p>
+            <p style="color: #5B6E63; font-size: 13px;">Jo tame aa request nathi kari, to aa email ignore kari shako.</p>
+          </div>
+        `)
+    })
   }
 }

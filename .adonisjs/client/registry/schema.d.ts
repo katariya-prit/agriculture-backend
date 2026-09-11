@@ -31,6 +31,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['verifyEmail']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'auth.resend_verification': {
+    methods: ["POST"]
+    pattern: '/auth/resend-verification'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/user').resendVerificationValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/user').resendVerificationValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['resendVerification']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['resendVerification']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'access_tokens.store': {
     methods: ["POST"]
     pattern: '/auth/login'
