@@ -1,108 +1,143 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
 import User from '#models/user'
-import EmailService, { OTP_VALIDITY_MINUTES } from '#services/email_service'
+import PendingRegistration from '#models/pending_registration'
+import EmailService from '#services/email_service'
 import { registerValidator, verifyEmailValidator, resendVerificationValidator } from '#validators/user'
 
+// OTP short-lived rakhvu joie — link jevu 24 kalak nahi, 6-digit code guessable hoy shake
+const OTP_VALIDITY_MINUTES = 10
+
 export default class AuthController {
-    /**
-     * Signup — fakt username, fullName, email, password lai chhe.
-     * Email verify na thay tya sudhi is_email_verified = false rahe chhe.
-     */
-    async register({ request, response }: HttpContext) {
-        const payload = await request.validateUsing(registerValidator)
+  /**
+   * Signup — `users` table ma KAI J insert NATHI thatu ahiya.
+   * Sirf `pending_registrations` ma temporary data + OTP save thay chhe.
+   * Real user OTP verify thata j `verifyEmail()` ma create thay chhe.
+   */
+  async register({ request, response }: HttpContext) {
+    const payload = await request.validateUsing(registerValidator)
 
-        const otp = EmailService.generateVerificationToken()
-        const emailVerificationTokenExpiresAt = DateTime.now().plus({ minutes: OTP_VALIDITY_MINUTES })
+    // Already verified/real user chhe ke nahi check karo
+    const existingUser = await User.query()
+      .where('email', payload.email)
+      .orWhere('username', payload.username)
+      .first()
 
-        const user = await User.create({
-            username: payload.username,
-            fullName: payload.fullName,
-            email: payload.email,
-            password: payload.password,
-            isEmailVerified: false,
-            emailVerificationToken: otp,
-            emailVerificationTokenExpiresAt,
-        })
-
-        try {
-            await EmailService.sendVerificationEmail({
-                toEmail: user.email,
-                fullName: user.fullName ?? user.username,
-                otp,
-            })
-        } catch (error) {
-            // Email fail thay to user ne pan delete kari nakho — nahi to "username already
-            // exists" error aave chhe pan user pase koi verification code j na male hoy.
-            await user.delete()
-            return response.internalServerError({
-                message: 'Account create thayu pan verification email mokli na shakya. Fari try karo.',
-            })
-        }
-
-        return response.created({
-            message: 'Account bani gayu. Tamara email par OTP mokli didho chhe.',
-            user,
-        })
+    if (existingUser) {
+      return response.badRequest({
+        message: 'Aa email ya username thi pehla thi j account chhe.',
+      })
     }
 
-    /**
-     * Email verify karva mate — user e email ma malel 6-digit OTP submit kare chhe.
-     * OTP OTP_VALIDITY_MINUTES mate j valid rahe chhe.
-     */
-    async verifyEmail({ request, response }: HttpContext) {
-        const { email, token } = await request.validateUsing(verifyEmailValidator)
+    const otp = EmailService.generateVerificationToken()
+    const otpExpiresAt = DateTime.now().plus({ minutes: OTP_VALIDITY_MINUTES })
 
-        const user = await User.findBy('email', email)
+    // Same email thi fari signup try kare (pehla wala OTP verify nathi karyu) to
+    // purana pending record ne overwrite kari nakho — navu OTP sathe.
+    await PendingRegistration.updateOrCreate(
+      { email: payload.email },
+      {
+        username: payload.username,
+        fullName: payload.fullName,
+        password: payload.password,
+        otp,
+        otpExpiresAt,
+      }
+    )
 
-        if (!user || user.emailVerificationToken !== token) {
-            return response.badRequest({ message: 'OTP khotu chhe.' })
-        }
+    console.log(`OTP for ${payload.email}: ${otp}`)
 
-        const expiresAt = user.emailVerificationTokenExpiresAt
-        if (!expiresAt || expiresAt < DateTime.now()) {
-            return response.badRequest({
-                message: 'OTP expire thai gayu chhe. Navu OTP mangavo.',
-                expired: true,
-            })
-        }
-
-        user.isEmailVerified = true
-        user.emailVerificationToken = null
-        user.emailVerificationTokenExpiresAt = null
-        await user.save()
-
-        return response.ok({ message: 'Email verify thai gayu. Have login kari shakso.' })
+    try {
+      await EmailService.sendVerificationEmail({
+        toEmail: payload.email,
+        fullName: payload.fullName,
+        otp,
+      })
+    } catch (error) {
+      console.error('Verification email mokalva ma fail thayu:', error)
+      return response.internalServerError({
+        message: 'OTP mokli na shakya. Fari try karo.',
+      })
     }
 
-    /**
-     * OTP expire thai gayu hoy ke male na hoy — navu OTP mokalva mate.
-     */
-    async resendVerification({ request, response }: HttpContext) {
-        const { email } = await request.validateUsing(resendVerificationValidator)
+    return response.created({
+      message: 'Tamara email par OTP mokli didho chhe. Verify karo etle account bani jashe.',
+    })
+  }
 
-        const user = await User.findBy('email', email)
+  /**
+   * OTP verify karva mate — sacho OTP hoy ane expire na thayu hoy TO J
+   * real `users` row create thay chhe. Pending record pachi delete thai jaay chhe.
+   */
+  async verifyEmail({ request, response }: HttpContext) {
+    const { email, token } = await request.validateUsing(verifyEmailValidator)
 
-        // User exist nathi karto evu jaher na karo — email enumeration attack thi bachva mate
-        if (!user || user.isEmailVerified) {
-            return response.ok({
-                message: 'Jo aa email registered ane unverified hoy, to navu OTP mokli didhu chhe.',
-            })
-        }
+    const pending = await PendingRegistration.findBy('email', email)
 
-        const otp = EmailService.generateVerificationToken()
-        user.emailVerificationToken = otp
-        user.emailVerificationTokenExpiresAt = DateTime.now().plus({ minutes: OTP_VALIDITY_MINUTES })
-        await user.save()
-
-        await EmailService.sendVerificationEmail({
-            toEmail: user.email,
-            fullName: user.fullName ?? user.username,
-            otp,
-        })
-
-        return response.ok({
-            message: 'Jo aa email registered ane unverified hoy, to navu OTP mokli didhu chhe.',
-        })
+    if (!pending || pending.otp !== token) {
+      return response.badRequest({ message: 'OTP khotu chhe.' })
     }
+
+    if (pending.otpExpiresAt < DateTime.now()) {
+      return response.badRequest({
+        message: 'OTP expire thai gayu chhe. Navu OTP mangavo.',
+        expired: true,
+      })
+    }
+
+    // Real account have j create thay chhe — password beforeSave hook thi hash thashe
+    const user = await User.create({
+      username: pending.username,
+      fullName: pending.fullName,
+      email: pending.email,
+      password: pending.password,
+      isEmailVerified: true,
+    })
+
+    await pending.delete()
+
+    return response.ok({
+      message: 'Email verify thai gayu ane account bani gayu. Have login kari shakso.',
+      user,
+    })
+  }
+
+  /**
+   * OTP expire thai gayu hoy ke male na hoy — navu OTP mokalva mate.
+   * (Sirf pending registrations mate — already-verified users mate nahi.)
+   */
+  async resendVerification({ request, response }: HttpContext) {
+    const { email } = await request.validateUsing(resendVerificationValidator)
+
+    const pending = await PendingRegistration.findBy('email', email)
+
+    // Pending registration exist nathi karto evu jaher na karo — email enumeration thi bachva
+    if (!pending) {
+      return response.ok({
+        message: 'Jo aa email na pending registration hoy, to navu OTP mokli didhu chhe.',
+      })
+    }
+
+    const otp = EmailService.generateVerificationToken()
+    pending.otp = otp
+    pending.otpExpiresAt = DateTime.now().plus({ minutes: OTP_VALIDITY_MINUTES })
+    await pending.save()
+
+    console.log(`OTP for ${pending.email}: ${otp}`)
+
+    try {
+      await EmailService.sendVerificationEmail({
+        toEmail: pending.email,
+        fullName: pending.fullName,
+        otp,
+      })
+    } catch (error) {
+      console.error('Verification email mokalva ma fail thayu:', error)
+      return response.internalServerError({ message: 'OTP mokli na shakya. Fari try karo.' })
+    }
+
+    return response.ok({
+      message: 'Jo aa email na pending registration hoy, to navu OTP mokli didhu chhe.',
+    })
+  }
 }

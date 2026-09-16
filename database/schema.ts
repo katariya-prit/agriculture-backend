@@ -69,6 +69,29 @@ export class CropListingSchema extends BaseModel {
   declare variety: string | null
 }
 
+export class PendingRegistrationSchema extends BaseModel {
+  static $columns = ['createdAt', 'email', 'fullName', 'id', 'otp', 'otpExpiresAt', 'password', 'updatedAt', 'username'] as const
+  $columns = PendingRegistrationSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare email: string
+  @column()
+  declare fullName: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare otp: string
+  @column.dateTime()
+  declare otpExpiresAt: DateTime
+  @column({ serializeAs: null })
+  declare password: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare username: string
+}
+
 export class SellingAccountSchema extends BaseModel {
   static $columns = ['aadhaarNumber', 'aadhaarVerified', 'createdAt', 'cropSeason', 'dateOfBirth', 'district', 'expectedYieldUnit', 'expectedYieldValue', 'farmingType', 'gender', 'id', 'mobileNumber', 'mobileVerified', 'photoUrl', 'pincode', 'primaryCrops', 'sellingAccountName', 'shortAddress', 'soilType', 'state', 'surveyNumber', 'taluka', 'updatedAt', 'userId', 'village'] as const
   $columns = SellingAccountSchema.$columns
